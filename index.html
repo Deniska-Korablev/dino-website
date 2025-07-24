@@ -1,0 +1,615 @@
+﻿<!DOCTYPE html>
+<html>	
+	<link rel="preload" href="bg1.webp" as="image" fetchpriority="high">
+	<link rel="preload" href="bg2.webp" as="image" fetchpriority="low">
+	<link rel="preload" href="bg3.webp" as="image" fetchpriority="low">
+	<link rel="preload" href="tuk.mp3" as="audio" fetchpriority="low">
+	<link rel="preload" href="puk.mp3" as="audio" fetchpriority="low">
+<head>
+	<title>Динозавры</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    	<style>	
+
+		@media (max-width: 768px) {
+    			/* Карточка с динозавром */
+    			.dino-pic {
+        			border-width: 3px !important;
+   				 }
+    			.block_end {
+        			padding: 15px;
+        			margin: 10px;
+    				}
+    			.cont {
+        			flex-direction: column; /* На мобильных - колонка */
+        			gap: 10px;
+    				}
+		}
+
+		@keyframes changeBg {
+  			0% { background-image: url('bg1.webp'); }
+  			25% { background-image: url('bg2.webp'); }
+  			65% { background-image: url('bg3.webp'); }
+			100% { background-image: url('bg1.webp'); }
+			}		
+		.bg {
+  			color: black;
+  			background-image: url('bg.webp');
+  			background-position: center;
+ 			background-size: cover;
+  			background-repeat: no-repeat;
+			}
+
+		.flex_bg {
+			position: absolute;
+			top: 0;
+  			left: 0;
+  			width: 100%;
+  			height: 100%;
+  			/* Добавляем will-change для оптимизации рендеринга */
+  			will-change: background-image;
+ 			 /* Улучшаем плавность переходов */
+  			animation: changeBg 30s infinite ease-in-out !important;
+  			/* Оптимизация загрузки */
+ 			background-size: cover;
+ 			background-repeat: no-repeat;
+  			background-position: center;
+  			/* Минимальный размер для предотвращения лагов */
+  			min-height: 200px;
+			}
+		.block_start {
+			text-align: justify;
+  			text-align-last: left; /* Последняя строка выравнивается по левому краю */
+  			hyphens: auto; /* Перенос слов (поддержка в FF/Safari) */
+			background: #327D64;
+            		margin: 20px;
+            		padding: 10px;
+            		border: 5px solid white;
+            		border-radius: 10px;  /* Закруглённые углы */
+	    		box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.5);
+			display: flex; /* Включаем flex-контейнер */
+  			gap: 30px; /* Расстояние между колонками */
+  			align-items: stretch; /* Растягиваем колонки по высоте */
+			}
+
+		.dino-gallery {
+  			display: grid;
+  			grid-template-columns: repeat(5, 1fr); /* 5 колонки */
+  			gap: 20px;
+  			max-width: 1200px;
+  			margin: 0 auto;
+  			padding: 10px;
+			}
+
+		.dino-card {
+			color: white;
+  			border: 2px solid #4B45EF;
+  			border-radius: 10px;
+  			padding: 15px;
+  			cursor: pointer;
+			transition: all 0.2s ease;
+  			text-align: center;
+			}
+		.game-mode .dino-card {
+ 			 cursor: crosshair;
+			}
+		.dino-card:hover {
+  			transform: translateY(-5px);
+  			box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+
+			}
+
+		.dino-card img {
+  			width: 100%;
+  			height: 120px;
+  			object-fit: cover;
+  			border-radius: 8px;
+			}
+
+		.dino-info {
+  			grid-column: 1 / -1; /* Занимает все колонки */
+  			background: #f0f8ff;
+  			padding: 20px;
+  			border-radius: 10px;
+  			margin-top: 20px;
+  			min-height: 100px;
+			}
+		.block_end {
+ 			max-width: 1200px;
+  			margin-left: auto;
+  			margin-right: auto;
+			background: #327D64;
+    			color: white;
+    			padding: 20px;
+    			margin: 20px;
+    			border-radius: 10px;
+    			border: 5px solid white;
+    			box-shadow: 10px 10px 20px rgba(0,0,0,0.5)
+			}
+
+		.block_end a:hover {
+  			text-decoration: underline;
+  			color: #6A64F1;
+			}
+
+		/* Модальное окно */
+		.modal {
+  			display: none;
+  			position: fixed;
+  			top: 0;
+  			left: 0;
+  			width: 100%;
+  			height: 100%;
+  			background: rgba(0,0,0,0.8);
+  			z-index: 1000;
+  			justify-content: center;
+  			align-items: center;
+			}
+
+		.modal-content {
+  			position: relative;
+  			max-width: 80%;
+  			background: white;
+  			padding: 30px;
+  			border-radius: 15px;
+  			box-shadow: 0 0 30px rgba(255,255,255,0.3);
+  			border: 3px solid #4B45EF;
+  			animation: scaleUp 0.5s ease-out;
+			}
+
+		@keyframes scaleUp {
+  			from { transform: scale(0.5); opacity: 0; }
+ 			 to { transform: scale(1); opacity: 1; }
+			}
+
+		#modalImage {
+  			max-height: 60vh;
+ 			max-width: 100%;
+  			display: block;
+  			margin: 0 auto 20px;
+  			border-radius: 10px;
+  			box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+			}
+
+		/* Эффект печатной машинки */
+		.typewriter {
+  			font-family: 'Courier New', monospace;
+  			overflow: hidden;
+  			white-space: pre-wrap;
+  			margin: 0 auto;
+  			letter-spacing: 1px;
+			}
+
+		/* Кнопка закрытия */
+		#closeModal {
+ 			position: absolute;
+  			top: 10px;
+  			right: 10px;
+  			font-size: 28px;
+  			background: none;
+  			border: none;
+  			cursor: pointer;
+  			color: black;
+			}
+		button {		
+			margin: 10px;
+       			padding: 10px 20px;
+        		background: #4B45EF;
+        		color: white;
+        		border: none;
+        		border-radius: 5px;
+    			}
+		.button_game {		
+			margin: 10px;
+       			padding: 10px 20px;
+        		background: #4B45EF;
+        		color: white;
+        		border: none;
+        		border-radius: 5px;
+			box-shadow: 4px 4px 8px rgba(0,0,0,0.6);
+			transition: all 0.1s ease;
+    			}
+
+        	.button_game:hover {
+        		transform: scale(0.99);
+    			box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); /* Уменьшим тень */
+        		}
+		.button_game:active {
+			transform: scale(0.98);
+			box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8); /* Уменьшим тень */
+			}
+		.cont {
+ 			display: flex; /* Включаем flex-контейнер */
+  			gap: 30px; /* Расстояние между колонками */
+  			align-items: center; /* Выравнивание по вертикали */
+  			justify-content: center; /* Добавьте эту строку для выравнивания по горизонтали */
+  			width: 100%;            /* На всю ширину родителя */
+  			margin: 0 auto;         /* Автоматические отступы по бокам */			
+			}
+		.dino-card.selected {
+    			border: 3px solid white;
+    			transform: scale(1.05);
+    			transition: transform 0.2s ease;
+  			}
+  		.dino-card.selected {
+    			opacity: 1;
+  			}
+    	</style>
+</head>
+<body class="bg">
+	
+	<h1 style="font-family: 'Rock Salt', cursive; font-size: 38px; margin: 10px; padding: 10px; text-align: center;" >Динозавры Мелового периода</h1>
+	<br>
+	<div class="block_start">		
+  		<section style="flex: 1; max-width: 1200px; margin: 0 auto;">
+   			<p style="font-size: 16px;">
+			   Меловой период, или мел, — последний период мезозойской эры. Начался 145,0 млн лет назад, закончился 66,0 млн лет назад.
+			Продолжался, таким образом, около 79 миллионов лет — самый продолжительный из периодов мезозойской эры и фанерозоя в целом.
+			На суше преобладали разнообразные растительноядные, хищные динозавры и летающие ящеры (птерозавры), многие из которых имели гигантские размеры. 
+			Климат мелового периода в целом был тёплым. Ледниковые шапки на Северном и Южном полюсах отсутствовали. В конце мела произошло резкое похолодание,
+			вызванное метеоритной бомбардировкой поверхности Земли и вулканизмом, что привело к крупнейшкму вымиранию в истории Земли.</p>
+ 		</section>
+  
+  		<section style="flex: 1; position: relative; min-height: 200px;">
+    			<div class="flex_bg"></div>
+  		</section>
+	</div>
+	<div class="dino-gallery">
+  		<div class="dino-card" data-dino="iguanodon">
+   			 <img src="iguanodon.webp" alt="Игуанодон">
+   			 <h3>Игуанодон</h3>
+  		</div>
+  
+  		<div class="dino-card" data-dino="trex">
+   			 <img src="trex.webp" alt="Тираннозавр">
+   			 <h3>Тираннозавр</h3>
+ 		 </div>
+  
+  		<div class="dino-card" data-dino="velociraptor">
+    			<img src="velociraptor.webp" alt="Велоцираптор">
+  			  <h3>Велоцираптор</h3>
+  		</div>
+  
+		<div class="dino-card" data-dino="spinosaurus">
+   			 <img src="spinosaurus.webp" alt="Спинозавр">
+    			<h3>Спинозавр</h3>
+  		</div>
+
+  		<div class="dino-card" data-dino="triceratops">
+    			<img src="triceratops.webp" alt="Трицератопс">
+    			<h3>Трицератопс</h3>
+ 		</div>
+		<div class="dino-card" data-dino="stegosaurus">
+    			<img src="stegosaurus.webp" alt="Стегозавр">
+    			<h3>Стегозавр</h3>
+ 		</div>
+  
+ 		<div class="dino-card" data-dino="ankylosaurus">
+    			<img src="ankylosaurus.webp" alt="Анкилозавр">
+    			<h3>Анкилозавр</h3>
+  		</div>
+  
+  		<div class="dino-card" data-dino="diplodocus">
+   			 <img src="diplodocus.webp" alt="Диплодок">
+    			<h3>Диплодок</h3>
+  		</div>
+  
+ 		 <div class="dino-card" data-dino="pterodactylus">
+   			 <img src="pterodactylus.webp" alt="Птеродактиль"> 
+    			<h3>Птеродактиль</h3>
+  		</div>			
+		 <div class="dino-card" data-dino="mosasaurus">
+   			 <img src="mosasaurus.webp" alt="Мезозавр"> 
+    			<h3>Мезозавр</h3>
+  		</div>
+	</div>
+
+	<div id="dinoModal" class="modal">
+  		<div class="modal-content">
+    			<img id="modalImage" src="" alt="">
+    			<div id="modalText" class="typewriter"></div>
+    			<button id="closeModal">×</button>
+  		</div>
+	</div>	
+	<div class="block_end">
+  		<h2 style="text-align: center; margin-bottom: 15px;">Игра</h2>
+		<p>Давайте проверим вашу внимательность! Среди этих 10 динозавров есть 3 не из Мелового (66-145млн.лет назад) а из позднего Юрского периода (145-202 млн.лет назад). После нажатии на кнопку [ИГРАТЬ] выберите 3-х динозавров из Юрского периода и нажмите на кнопку [ПРОВЕРИТЬ]  </p>
+		<div class="cont">
+			<button class="button_game" id="b_game">ИГРАТЬ</button>
+    			<button class="button_game" id="b_check">ПРОВЕРИТЬ</button>
+		</div>
+	</div>
+	<div class="block_end">
+
+	<script>
+
+		const typeSound = new Audio('tuk.mp3');
+		typeSound.volume = 0.1; // Регулировка громкости
+
+		const hoverSound = new Audio('puk.mp3');
+ 		hoverSound.volume = 0.2;
+
+		let typingTimeout;
+
+  		// "Разогрев" звука
+  		window.addEventListener('load', () => {
+  		hoverSound.play().then(() => hoverSound.pause());
+  		typeSound.play().then(() => typeSound.pause());
+		});
+
+		document.querySelectorAll('.dino-card').forEach(card => {
+  		card.addEventListener('mouseenter', () => {
+    			if (!gameStarted) { // Звук только когда игра не активна
+      				hoverSound.currentTime = 0;
+      				hoverSound.play().catch(e => console.log("Звук не воспроизведён"));
+    				}
+  			});
+		});
+
+		// Обработчик клика (разделяем игру и просмотр информации)
+		document.querySelectorAll('.dino-card').forEach(card => {
+  			card.addEventListener('click', function() {
+    			const dinoId = this.dataset.dino;
+    		if (gameStarted) {
+  			if (selectedDinosaurs.includes(dinoId)) {
+    				selectedDinosaurs = selectedDinosaurs.filter(id => id !== dinoId);
+    				this.classList.remove('selected');
+  			} else if (selectedDinosaurs.length < 3) {
+    				selectedDinosaurs.push(dinoId);
+    				this.classList.add('selected');
+  			} else {
+    				showGameResult('Вы уже выбрали 3 динозавров! Нажмите "Проверить"');
+ 			}
+  		return; // Возвращаемся ТОЛЬКО если игра активна
+		}
+    
+    		// Режим просмотра информации
+    		const info = dinoData[dinoId];
+    		const modal = document.getElementById('dinoModal');
+    
+    		document.getElementById('modalImage').src = this.querySelector('img').src;
+    		modal.style.display = 'flex';
+    
+    		const fullText = `${info.name}\nПериод: ${info.period}\nПитание: ${info.diet}\n${info.fact}`;
+    		typeWriter(fullText, document.getElementById('modalText'));
+  		});
+		});
+		
+
+ 			const dinoData = {
+ 				 iguanodon: {
+   					name: "Игуанодон",
+    					period: "Ранний мел (140-110 млн лет назад)",
+    					diet: "Травоядный",
+    					fact: "Чемпион по универсальности! Первый открытый науке динозавр (1825 г.). Имел:\n• Шип на большом пальце (15 см) для защиты\n• Копытоподобные пальцы для ходьбы\n• Размер: до 10 м длиной, 3 тонны\n• Мог передвигаться на двух и четырех лапах",
+    					special: "🏆 Первый «официальный» динозавр в истории палеонтологии"
+  					},
+  				trex: {
+    					name: "Тираннозавр Рекс",
+    					period: "Поздний мел (68-66 млн лет назад)",
+    					diet: "Хищник",
+    					fact: "Король мелового периода! Рекорды:\n• Самый мощный укус (около 5 тонн силы)\n• Зубы до 30 см (с пилообразными краями)\n• Давление челюстей: 15 000 Н\n• Размер: 12 м длиной, 5-9 тонн\n• Скорость: до 40 км/ч (спорный вопрос)",
+    					special: "🏆 Абсолютный чемпион по силе укуса среди сухопутных животных всех времен"
+  					},
+  				velociraptor: {
+    					name: "Велоцираptор",
+    					period: "Поздний мел (75-71 млн лет назад)",
+    					diet: "Хищник",
+    					fact: "Интеллектуал мелового периода! Особенности:\n• Серповидный коготь (6-7 см) на задних лапах\n• Перья (не чешуя, как в «Парке Юрского периода»)\n• Размер: 2 м длиной, 15-20 кг\n• Охотился стаями (спорно)\n• Мозг пропорционально крупнее, чем у многих динозавров",
+    					special: "🏆 Самый «умный» среди хищников своего размера (отношение мозга к телу)"
+  					},
+  				spinosaurus: {
+    					name: "Спинозавр",
+    					period: "Меловой период (112-93 млн лет назад)",
+    					diet: "Рыбоядный/хищник",
+    					fact: "Уникальный полуводный гигант! Рекорды:\n• Самый длинный хищный динозавр (до 18 м)\n• Парус на спине (до 1.8 м высотой)\n• Крокодилоподобные челюсти с коническими зубами\n• Питался преимущественно рыбой (включая 8-метровых акул)\n• Ноздри смещены к середине черепа для плавания",
+    					special: "🏆 Единственный известный водоплавающий динозавр-хищник"
+  					},
+  				triceratops: {
+    					name: "Трицератопс",
+    					period: "Поздний мел (68-66 млн лет назад)",
+    					diet: "Травоядный",
+    					fact: "Танк мелового периода! Характеристики:\n• Череп до 2.5 м (⅓ длины тела)\n• Рога: лобные (до 1 м) и носовой (короче)\n• Костный воротник весом до 200 кг\n• Размер: 9 м длиной, 6-12 тонн\n• Мог развивать скорость до 35 км/ч",
+    					special: "🏆 Самый крупный рогатый динозавр и главный противник T-Rex"
+  					},
+				stegosaurus: {
+    					name: "Стегозавр",
+    					period: "Поздний юрский период (155-150 млн лет назад)",
+    					diet: "Травоядный",
+    					fact: "Динозавр-крепость! Уникальные черты:\n• 17 костных пластин на спине (до 60 см высотой)\n• Хвост с 4 острыми шипами (до 90 см каждый)\n• Мозг размером с грецкий орех (80 г)\n• Размер: 9 м длиной, 4-5 тонн\n• Слабое зрение - ориентировался по запаху",
+    					special: "🏆 Самый узнаваемый динозавр благодаря уникальным спинным пластинам"
+					},
+  				ankylosaurus: {
+    					name: "Анкилозавр",
+    					period: "Поздний мел (68-66 млн лет назад)",
+    					diet: "Травоядный",
+    					fact: "Бронированный молот! Особенности:\n• Костные пластины (остеодермы) толщиной до 5 см\n• Хвостовая булава весом 50-60 кг\n• Непробиваемый панцирь даже для T-Rex\n• Размер: 6-8 м длиной, 4-8 тонн\n• Глаза с костяными «веками»",
+    					special: "🏆 Абсолютный чемпион по броне среди динозавров"
+  					},
+  				diplodocus: {
+    					name: "Диплодок",
+    					period: "Юрский период (154-152 млн лет назад)",
+    					diet: "Травоядный",
+    					fact: "Гигант с хлыстом! Рекорды:\n• Один из самых длинных динозавров (до 27 м)\n• Хвост из 80 позвонков (удар как кнутом)\n• Шея длиной 6 м (но ограниченная подвижность)\n• Вес: 10-16 тонн (легче брахиозавра)\n• Зубы только в передней части челюстей",
+    					special: "🏆 Чемпион по длине хвоста среди всех животных"
+  					},
+  				pterodactylus: {
+    					name: "Птеродактиль",
+    					period: "Юрский период (150-148 млн лет назад)",
+    					diet: "Рыбоядный",
+    					fact: "Воздушный ас! Особенности:\n• Размах крыльев: 1-1.5 м (небольшой для птерозавров)\n• Беззубая форма (в отличие от других птерозавров)\n• Питался рыбой и мелкими животными\n• Полые кости для облегчения веса\n• Не динозавр, а летающий ящер!",
+    					special: "🏆 Один из первых открытых летающих рептилий (1784 г.)"
+  					},
+  				mosasaurus: {
+    					name: "Мозазавр",
+    					period: "Поздний мел (70-66 млн лет назад)",
+    					diet: "Хищник (рыбоядный)",
+    					fact: "Король древних морей! Характеристики:\n• Длина до 17 м (как современный кашалот)\n• Двойной ряд зубов на нёбе\n• Челюсти открывались на 120°\n• Хвост как у акулы (вертикальные лопасти)\n• Мог проглотить добычу размером с автомобиль",
+    					special: "🏆 Самый крупный морской хищник мелового периода"
+  					}
+			};
+
+		// Функция печатной машинки с возможностью остановки
+		function typeWriter(text, element, speed = 60) {
+  		// Останавливаем предыдущую анимацию
+  		clearTimeout(typingTimeout);
+  		element.innerHTML = '';
+  
+  		let i = 0;
+  		function typing() {
+    			if (i < text.length) {
+      			// Проигрываем звук для видимых символов
+      				if (text.charAt(i) !== ' ' && text.charAt(i) !== '\n') {
+        				typeSound.currentTime = 0;
+        				typeSound.play().catch(e => console.log("Автовоспроизведение заблокировано"));
+     			 	}
+      
+      			// Обработка переносов строк
+      			element.innerHTML += text.charAt(i) === '\n' ? '<br>' : text.charAt(i);
+      			i++;
+      			typingTimeout = setTimeout(typing, speed);
+    			}
+  		}
+  		typing();
+		}
+		// Универсальная функция закрытия модального окна
+		function closeModal() {
+ 			document.getElementById('dinoModal').style.display = 'none';
+ 			typeSound.pause();
+  			typeSound.currentTime = 0;
+  			clearTimeout(typingTimeout); // Останавливаем анимацию печати
+		}
+
+		// Вешаем обработчики закрытия
+		document.getElementById('closeModal').addEventListener('click', closeModal);
+		window.addEventListener('click', e => e.target === document.getElementById('dinoModal') && closeModal());
+		document.addEventListener('keydown', e => e.key === 'Escape' && closeModal());
+
+
+		// Переменные для игры
+		let gameStarted = false;
+		let selectedDinosaurs = [];
+		const jurassicDinosaurs = ['stegosaurus', 'diplodocus', 'pterodactylus']; // Правильные ответы
+
+		// Обработчики кнопок
+		document.getElementById('b_game').addEventListener('click', startGame);
+		document.getElementById('b_check').addEventListener('click', checkAnswers);
+
+		function startGame() {
+  			gameStarted = true;
+  			selectedDinosaurs = [];
+  
+  			// Сбрасываем все выделения
+  			document.querySelectorAll('.dino-card').forEach(card => {
+    			card.classList.remove('selected');
+  			});
+  
+  			document.querySelector('.dino-gallery').classList.add('game-mode');
+  			showGameResult('Игра началась! Выберите 3 динозавра Юрского периода');
+		}
+
+		function checkAnswers() {
+  			if (!gameStarted) {
+    				showGameResult('Сначала нажмите "Играть"!');
+    				return;
+  				}
+
+  			if (selectedDinosaurs.length !== 3) {
+    				showGameResult('Нужно выбрать ровно 3 динозавров!');
+    				return;
+ 				 }
+
+  			// Просто считаем правильные ответы
+  			let correctAnswers = selectedDinosaurs.filter(dinoId => 
+    			jurassicDinosaurs.includes(dinoId)
+  			).length;
+
+ 			 // Показываем результат
+  			const resultMessage = `Вы нашли ${correctAnswers} из 3 динозавров Юрского периода!`;
+  			showGameResult(resultMessage);
+
+  			// Сбрасываем игру
+  			document.querySelector('.dino-gallery').classList.remove('game-mode');
+  			gameStarted = false;
+  			selectedDinosaurs = [];
+  
+  			// Автоматически очищаем выбор через 2 секунды
+  			setTimeout(() => {
+    			document.querySelectorAll('.dino-card').forEach(card => {
+      			card.classList.remove('selected');
+    				});
+  			}, 2000);
+		}
+  
+  		// Создаем красивое модальное окно вместо alert
+  		showGameResult(resultMessage);
+  
+  		gameStarted = false;
+		
+
+	// Функция для красивого отображения результатов
+	function showGameResult(message) {
+ 	 	const modal = document.createElement('div');
+  		modal.style.position = 'fixed';
+ 		modal.style.top = '0';
+  		modal.style.left = '0';
+  		modal.style.width = '100%';
+ 		modal.style.height = '100%';
+  		modal.style.backgroundColor = 'rgba(0,0,0,0.8)';
+  		modal.style.display = 'flex';
+  		modal.style.justifyContent = 'center';
+  		modal.style.alignItems = 'center';
+  		modal.style.zIndex = '1000';
+  
+  		const content = document.createElement('div');
+  		content.style.backgroundColor = '#327D64';
+  		content.style.padding = '20px';
+  		content.style.borderRadius = '10px';
+  		content.style.border = '3px solid white';
+  		content.style.maxWidth = '80%';
+  		content.style.textAlign = 'center';
+  
+  		const text = document.createElement('p');
+  		text.textContent = message;
+  		text.style.color = 'white';
+  		text.style.fontSize = '18px';
+  		text.style.marginBottom = '20px';
+  
+  		const closeButton = document.createElement('button');
+  		closeButton.textContent = 'Закрыть';
+  		closeButton.className = 'button_game';
+  		closeButton.style.margin = '0 auto';
+  		closeButton.onclick = () => document.body.removeChild(modal);
+  
+  		content.appendChild(text);
+  		content.appendChild(closeButton);
+  		modal.appendChild(content);
+  		document.body.appendChild(modal);
+		}
+		
+	</script>
+	
+  		<h2 style="text-align: center; margin-bottom: 15px;">Выводы о динозаврах мелового периода</h2>
+  
+  		<div style="text-align: justify; line-height: 1.6;">
+    			<p>Меловой период стал временем расцвета и одновременно заката эры динозавров. Вот ключевые особенности:</p>
+    
+    			<ul style="padding-left: 20px;">
+      			<li>Появление самых совершенных и специализированных видов (тираннозавры, трицератопсы)</li>
+      			<li>Развитие социального поведения у некоторых видов (стадные травоядные)</li>
+      			<li>Эволюционное "соревнование" между хищниками и их жертвами</li>
+      			<li>Глобальное вымирание 66 млн лет назад, вероятно вызванное падением метеорита</li>
+    			</ul>
+    
+    			<p style="margin-top: 15px;">
+     			Для более подробного изучения рекомендуем: 
+      				<a href="https://cretaceousdinosaurs.tilda.ws/page1" 
+         			target="_blank" 
+         			style="color: #4B45EF; font-weight: bold; text-decoration: none;">
+        			Электронный учебник-энциклопедия Радченко Ю. и Федоровой К.
+      				</a>
+    			</p>
+  		</div>
+	</div>
+
+</body>
+</html>
