@@ -11,18 +11,15 @@
     	<style>	
 
 		@media (max-width: 768px) {
-    			/* Карточка с динозавром */
-    			.dino-pic {
-        			border-width: 3px !important;
-   				 }
-    			.block_end {
-        			padding: 15px;
-        			margin: 10px;
-    				}
-    			.cont {
-        			flex-direction: column; /* На мобильных - колонка */
-        			gap: 10px;
-    				}
+			  .block_start, .block_end {
+    				width: 95% !important; /* Чуть уже экрана */
+    				margin: 10px auto !important; /* Центрирование */
+    				padding: 15px !important; /* Увеличим отступы */
+    				flex-direction: column; /* Колонка */
+  			}
+  			.dino-card {
+    				width: 100% !important; /* На всю ширину */
+  			}
 		}
 
 		@keyframes changeBg {
