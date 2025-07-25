@@ -11,15 +11,18 @@
     	<style>	
 
 		@media (max-width: 768px) {
-			  .block_start, .block_end {
-    				width: 95% !important; /* Чуть уже экрана */
-    				margin: 10px auto !important; /* Центрирование */
+			.block_start, .block_end {
+    				width: 90% !important; /* Чуть уже экрана */
+    				margin: 15px auto !important; /* Центрирование */
     				padding: 15px !important; /* Увеличим отступы */
     				flex-direction: column; /* Колонка */
   				}
   			.dino-card {
-    				width: 100% !important; /* На всю ширину */
-				min-width: 0 !important; /* Фикс переполнения */
+   				width: calc(50% - 5px) !important; /* Чуть уже 50% с учетом gap */
+    				margin: 0 !important;
+    				box-sizing: border-box; /* Чтобы padding не увеличивал ширину */
+    				border: 2px solid #4B45EF; /* Обводка */
+    				box-shadow: none; /* Убираем тень для мобильных */
   				}
 			.dino-gallery {
     				grid-template-columns: repeat(2, 1fr); /* 2 колонки вместо 5 */
@@ -27,6 +30,7 @@
   				}
 			body {
     				overflow-x: hidden; /* Блокируем горизонтальный скролл */
+				padding-right: 1px; /* "Разбудит" браузерный рендеринг */
     				width: 100vw;
   				}
 		}
