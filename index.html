@@ -11,10 +11,15 @@
     	<style>	
 
 		@media (max-width: 768px) {
+			body {
+    				overflow-x: hidden; /* Блокируем горизонтальный скролл */
+				padding-right: 1px; /* "Разбудит" браузерный рендеринг */
+    				width: 100vw;
+  				}
 			.block_start, .block_end {
     				width: 90% !important; /* Чуть уже экрана */
-    				margin: 15px auto !important; /* Центрирование */
-    				padding: 15px !important; /* Увеличим отступы */
+    				margin: 20px auto !important; /* Центрирование */
+    				padding: 20px !important; /* Увеличим отступы */
     				flex-direction: column; /* Колонка */
   				}
   			.dino-card {
@@ -27,11 +32,6 @@
     				grid-template-columns: repeat(2, 1fr); /* 2 колонки вместо 5 */
 				padding: 0 10px; /* Отступ слева и справа */
     				gap: 10px;
-  				}
-			body {
-    				overflow-x: hidden; /* Блокируем горизонтальный скролл */
-				padding-right: 1px; /* "Разбудит" браузерный рендеринг */
-    				width: 100vw;
   				}
 		}
 
