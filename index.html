@@ -11,11 +11,6 @@
     	<style>	
 
 		@media (max-width: 768px) {
-			body {
-    				overflow-x: hidden; /* Блокируем горизонтальный скролл */
-				padding-right: 1px; /* "Разбудит" браузерный рендеринг */
-    				width: 100vw;
-  				}
 			.block_start, .block_end {
     				width: 90% !important; /* Чуть уже экрана */
     				margin: 20px auto !important; /* Центрирование */
@@ -23,9 +18,7 @@
     				flex-direction: column; /* Колонка */
   				}
   			.dino-card {
-    				margin: 0 !important;
-    				box-sizing: border-box; /* Чтобы padding не увеличивал ширину */
-    				border: 2px solid #4B45EF; /* Обводка */
+   				width: 100% !important; /* На всю ширину */
     				box-shadow: none; /* Убираем тень для мобильных */
   				}
 			.dino-gallery {
